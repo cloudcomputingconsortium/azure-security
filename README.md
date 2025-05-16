@@ -115,4 +115,4 @@ Feel free to submit PRs or open issues to enhance automation, add support for ad
 
 ## 👤 Author
 
-Created by: YourNameHere
+Created by: Samuel Navarro
