@@ -1,0 +1,35 @@
+trigger:
+  paths:
+    include:
+      - '**/*.tf'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  azureServiceConnection: 'AzureSPN'
+  backendResourceGroup: 'tfstate-rg'
+  backendStorageAccount: 'tfstateaccount'
+  backendContainer: 'tfstate'
+  backendKey: 'azure-policy.tfstate'
+
+steps:
+  - task: TerraformInstaller@1
+    inputs:
+      terraformVersion: 'latest'
+
+  - script: |
+      terraform init \
+        -backend-config="resource_group_name=$(backendResourceGroup)" \
+        -backend-config="storage_account_name=$(backendStorageAccount)" \
+        -backend-config="container_name=$(backendContainer)" \
+        -backend-config="key=$(backendKey)"
+    displayName: 'Terraform Init'
+
+  - script: |
+      terraform plan -out=tfplan
+    displayName: 'Terraform Plan'
+
+  - script: |
+      terraform apply -auto-approve tfplan
+    displayName: 'Terraform Apply'

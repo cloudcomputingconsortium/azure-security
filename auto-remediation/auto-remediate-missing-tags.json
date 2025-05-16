@@ -1,0 +1,43 @@
+{
+  "properties": {
+    "displayName": "Auto-remediate missing tags",
+    "mode": "All",
+    "policyRule": {
+      "if": {
+        "field": "[concat('tags[', parameters('tagName'), ']')]",
+        "exists": "false"
+      },
+      "then": {
+        "effect": "modify",
+        "details": {
+          "roleDefinitionIds": [
+            "/providers/Microsoft.Authorization/roleDefinitions/<contributor-role-id>"
+          ],
+          "operations": [
+            {
+              "operation": "add",
+              "field": "[concat('tags[', parameters('tagName'), ']')]",
+              "value": "[parameters('tagValue')]"
+            }
+          ]
+        }
+      }
+    },
+    "parameters": {
+      "tagName": {
+        "type": "String",
+        "metadata": {
+          "description": "Name of the tag",
+          "displayName": "Tag Name"
+        }
+      },
+      "tagValue": {
+        "type": "String",
+        "metadata": {
+          "description": "Value of the tag",
+          "displayName": "Tag Value"
+        }
+      }
+    }
+  }
+}

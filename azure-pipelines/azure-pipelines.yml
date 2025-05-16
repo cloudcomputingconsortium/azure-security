@@ -1,0 +1,35 @@
+trigger:
+  paths:
+    include:
+      - '**/*.json'
+      - '**/*.bicep'
+      - '**/*.ps1'
+      - '**/*.sh'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  azureServiceConnection: 'AzureSPN'
+  location: 'eastus'
+
+steps:
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: $(azureServiceConnection)
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        az deployment sub create \
+          --location $(location) \
+          --template-file arm-templates/enforce-storage-encryption.json
+
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: $(azureServiceConnection)
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        az deployment sub create \
+          --location $(location) \
+          --template-file bicep/require-private-endpoints.bicep
